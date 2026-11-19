@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#102b22">
+<title>Thăng Cấp Công An</title>
+<style>
+:root{--bg:#102b22;--gold:#f4cf72;--panel:#1b3b30;--cream:#fff7df}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at top,#28523e,#0c211b 70%);color:var(--cream);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+.wrap{max-width:560px;margin:auto;padding:16px 13px 28px}
+header{text-align:center;padding:12px 8px 16px}
+.logo{width:76px;height:76px;border:3px solid var(--gold);border-radius:50%;margin:0 auto 9px;display:grid;place-items:center;background:linear-gradient(145deg,#f8e5a6,#bd8b2e);box-shadow:0 0 0 5px #ffffff14}
+.logo svg{width:52px;height:52px}
+h1{font-size:25px;letter-spacing:1px;margin:4px 0;color:var(--gold);text-transform:uppercase}
+.sub{font-size:13px;opacity:.8}
+.stats{display:flex;gap:8px;margin:10px 0}
+.stat{flex:1;background:#ffffff12;border:1px solid #ffffff20;border-radius:12px;padding:9px;text-align:center}
+.stat small{display:block;opacity:.7;font-size:11px}.stat b{font-size:18px;color:var(--gold)}
+.current{background:var(--panel);border:1px solid #d7b45d66;border-radius:16px;padding:12px;display:flex;align-items:center;gap:13px;margin-bottom:12px}
+.current .rankbadge{width:68px;height:54px;flex-shrink:0}
+.current strong{color:var(--gold);font-size:17px}.current p{margin:3px 0 0;font-size:12px;opacity:.8}
+h2{font-size:15px;margin:14px 2px 8px;color:var(--gold)}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;background:#081a15;padding:9px;border:2px solid #9e803d;border-radius:15px;touch-action:manipulation}
+.cell{aspect-ratio:1/1;border-radius:10px;background:#ffffff0b;border:1px dashed #ffffff25;display:flex;align-items:center;justify-content:center;min-width:0;position:relative}
+.cell.filled{background:linear-gradient(145deg,#315746,#1a382c);border:1px solid #b99a55;box-shadow:inset 0 1px 5px #ffffff18}
+.cell.selected{outline:3px solid #ffe28c;outline-offset:1px}
+.rankbadge{width:90%;height:82%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.epaulet{width:70%;height:48%;border:2px solid #d5b86e;border-radius:5px;background:linear-gradient(135deg,#e6c878,#b58b38);position:relative;display:flex;align-items:center;justify-content:center;gap:2px;box-shadow:0 2px 3px #0007}
+.epaulet:before,.epaulet:after{content:"";position:absolute;top:-5px;width:7px;height:9px;background:#d8b85e;border:1px solid #f7e4a1;border-radius:3px}
+.epaulet:before{left:5px}.epaulet:after{right:5px}
+.star{color:#fff8d7;font-size:clamp(8px,2.4vw,14px);line-height:1;text-shadow:0 1px 2px #704b13}
+.stripe{height:4px;width:12px;background:#f7e9bd;border-radius:2px}
+.rankname{font-size:clamp(8px,2.5vw,11px);font-weight:700;text-align:center;line-height:1.1;max-width:100%;color:#fff4d4}
+.controls{display:flex;gap:8px;margin-top:12px}
+button{border:0;border-radius:12px;padding:12px 10px;font-weight:700;font-size:14px;cursor:pointer}
+.primary{background:var(--gold);color:#30230c;flex:1}.secondary{background:#ffffff18;color:white;border:1px solid #ffffff35}
+.next{background:#ffffff10;border:1px solid #ffffff25;border-radius:13px;padding:10px 12px;margin-top:10px;display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.next .rankbadge{width:55px;height:42px}
+.help{font-size:12px;line-height:1.5;opacity:.8;margin:12px 3px}
+.message{min-height:22px;text-align:center;color:#ffe39a;font-size:13px;margin-top:8px}
+footer{text-align:center;font-size:10px;opacity:.5;margin-top:15px}
+@media(min-width:500px){.board{gap:9px;padding:12px}.wrap{padding-top:22px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div class="logo" aria-label="Biểu tượng ngôi sao">
+  <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 7 61 36 92 38 68 58 76 89 50 72 24 89 32 58 8 38 39 36Z" fill="#a32920" stroke="#fff0bd" stroke-width="4"/><circle cx="50" cy="49" r="10" fill="#f7d77b"/><path d="M50 39v20M40 49h20" stroke="#9d281d" stroke-width="3"/></svg>
+ </div>
+ <h1>Thăng Cấp Công An</h1>
+ <div class="sub">Trò chơi ghép quân hàm • Chơi cá nhân</div>
+</header>
+<div class="stats">
+ <div class="stat"><small>Điểm</small><b id="score">0</b></div>
+ <div class="stat"><small>Cấp cao nhất</small><b id="best">Binh nhì</b></div>
+ <div class="stat"><small>Lượt còn</small><b id="moves">35</b></div>
+</div>
+<div class="current">
+ <div id="currentBadge"></div>
+ <div><strong id="currentName">Binh nhì</strong><p>Chạm vào ô trống để đặt quân hàm tiếp theo.</p></div>
+</div>
+<h2>BÀN GHÉP QUÂN HÀM</h2>
+<div class="board" id="board"></div>
+<div class="next"><span>Quân hàm kế tiếp</span><div id="nextBadge"></div></div>
+<div class="message" id="message">Ghép hai quân hàm giống nhau để thăng cấp!</div>
+<div class="controls">
+ <button class="primary" id="restart">Chơi lại</button>
+ <button class="secondary" id="undo">Hoàn tác</button>
+</div>
+<p class="help"><b>Cách chơi:</b> Chạm một ô trống để đặt quân hàm đang hiển thị. Khi hai quân hàm cùng cấp đứng cạnh nhau (ngang hoặc dọc), chúng tự ghép thành cấp cao hơn. Có thể ghép liên tiếp. Bàn đầy hoặc hết lượt thì kết thúc.</p>
+<footer>Hình quân hàm minh họa tự tạo bằng CSS • Không phải phù hiệu chính thức</footer>
+</div>
+<script>
+const ranks=["Binh nhì","Binh nhất","Hạ sĩ","Trung sĩ","Thượng sĩ","Thiếu úy","Trung úy","Thượng úy","Đại úy","Thiếu tá","Trung tá","Thượng tá","Đại tá","Thiếu tướng","Trung tướng","Thượng tướng","Đại tướng"];
+const W=5,H=7,MAX=W*H;
+let cells=Array(MAX).fill(null),score=0,moves=35,current=0,next=0,history=[],ended=false;
+const $=id=>document.getElementById(id);
+function badge(level){
+ const stars=Math.min(5,level+1), stripes=Math.max(0,Math.min(3,level-4));
+ return `<div class="rankbadge"><div class="epaulet">${Array.from({length:stars},()=>'<span class="star">★</span>').join('')}${stripes?'<span class="stripe"></span>'.repeat(stripes):''}</div><div class="rankname">${ranks[level]}</div></div>`;
+}
+function draw(){
+ $("board").innerHTML="";
+ cells.forEach((v,i)=>{let d=document.createElement("div");d.className="cell"+(v!==null?" filled":"");d.innerHTML=v===null?"":badge(v);d.addEventListener("click",()=>place(i));$("board").appendChild(d)});
+ $("score").textContent=score;$("moves").textContent=moves;
+ let max=Math.max(0,...cells.filter(v=>v!==null));$("best").textContent=ranks[max];
+ $("currentBadge").innerHTML=badge(current);$("currentName").textContent=ranks[current];$("nextBadge").innerHTML=badge(next);
+}
+function neighbors(i){let r=Math.floor(i/W),c=i%W;return [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].filter(([y,x])=>y>=0&&y<H&&x>=0&&x<W).map(([y,x])=>y*W+x)}
+function mergeFrom(start){
+ let queue=[start];
+ while(queue.length){
+  let i=queue.shift(),v=cells[i];if(v===null||v>=ranks.length-1)continue;
+  let group=[],seen=new Set([i]),q=[i];
+  while(q.length){let a=q.shift();group.push(a);for(let n of neighbors(a)){if(!seen.has(n)&&cells[n]===v){seen.add(n);q.push(n)}}}
+  if(group.length>=2){
+   group.slice(1).forEach(a=>cells[a]=null);cells[i]=v+1;score+=(v+1)*10;queue.unshift(i);
+   $("message").textContent="Thăng cấp: "+ranks[v]+" → "+ranks[v+1]+"!";
+  }
+ }
+}
+function save(){history.push({cells:[...cells],score,moves,current,next});if(history.length>20)history.shift()}
+function place(i){
+ if(ended||cells[i]!==null)return;
+ save();cells[i]=current;moves--;mergeFrom(i);
+ current=next;next=Math.floor(Math.random()*Math.min(7,ranks.length));
+ if(cells.every(v=>v!==null)||moves<=0){ended=true;$("message").textContent="Kết thúc! Điểm của bạn: "+score+" — nhấn Chơi lại để bắt đầu."}
+ draw();
+}
+function restart(){cells=Array(MAX).fill(null);score=0;moves=35;current=0;next=0;history=[];ended=false;$("message").textContent="Ghép hai quân hàm giống nhau để thăng cấp!";draw();next=Math.floor(Math.random()*4);draw()}
+$("restart").onclick=restart;
+$("undo").onclick=()=>{if(!history.length||ended)return;let s=history.pop();cells=s.cells;score=s.score;moves=s.moves;current=s.current;next=s.next;$("message").textContent="Đã hoàn tác một lượt.";draw()};
+restart();
+</script>
+</body>
+</html>
